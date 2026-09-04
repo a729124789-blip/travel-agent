@@ -1,0 +1,45 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# ===== 环境变量（含 API Key，绝不提交） =====
+.env
+.env.local
+.env.*.local
+
+# ===== 数据文件 =====
+backend/data/memory/*.json
+backend/data/vector_store.db
+backend/data/vector_store.db.lock
+# 本地向量模型（366MB，不提交，需自行下载）
+backend/data/models/*/
+!backend/data/models/.gitkeep
+
+# ===== 前端 =====
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# ===== IDE =====
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ===== 日志 =====
+*.log
+logs/
+
+# ===== 操作系统 =====
+.DS_Store
+Thumbs.db
+
+# ===== 临时文件 =====
+*.tmp
+*.bak
+_test_*.py

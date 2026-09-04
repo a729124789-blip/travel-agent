@@ -1,0 +1,25 @@
+# Web 框架
+fastapi>=0.115
+uvicorn[standard]>=0.30
+
+# Agent 编排
+langgraph>=0.2
+langchain-openai>=0.2
+
+# RAG
+sentence-transformers>=3.0
+# 本地向量库：pymilvus + milvus-lite（如使用 Docker Milvus 则只需 pymilvus）
+pymilvus>=3.0
+milvus-lite>=3.0
+setuptools>=69,<82
+
+# 搜索
+ddgs>=9.0
+
+# 配置与校验
+pydantic>=2.0
+pydantic-settings>=2.0
+python-dotenv>=1.0
+
+# 日志
+loguru>=0.7
