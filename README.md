@@ -2,10 +2,6 @@
 
 基于 **LangGraph 多 Agent 编排 + RAG 商旅知识库 + 实时数据 MCP + Vue3 前端**的智能旅行规划系统。采用 Plan-and-Solve 逐天交付模式，支持自然语言对话与表单确认混合交互，通过 SSE 流式输出实时展示 AI 思考过程与行程生成。
 
-融合自两个源项目：
-- **差旅出行助手（CLI）**：多智能体出行规划核心（意图识别 / 事项收集 / 偏好管理 / RAG / 行程规划）
-- **旅行多 Agent 助手**：FastAPI 后端 + Vue3 前端外壳
-
 ---
 
 ## 🖼️ 演示截图
@@ -221,7 +217,7 @@ SSE 流式输出 → 前端渲染（Markdown + 触发词卡片 + 地图）
 │   │   │   ├── memory_manager.py
 │   │   │   ├── long_term.py           # 长期记忆（JSON 持久化）
 │   │   │   └── short_term.py          # 短期记忆（会话级）
-│   │   ├── skills/                    # 从源项目迁移的 Skill 定义
+│   │   ├── skills/                    # 内部 Skill 定义
 │   │   └── utils/                     # 工具（熔断器 / 重试 / JSON 解析）
 │   ├── data/
 │   │   ├── models/bge-small-zh-v1.5/  # 本地向量模型（366MB）
@@ -235,8 +231,6 @@ SSE 流式输出 → 前端渲染（Markdown + 触发词卡片 + 地图）
 │   ├── requirements.txt
 │   └── README.md
 │
-├── 居丽叶简历项目6：差旅出行助手/      # 源项目①（CLI，核心 Agent 系统来源）
-├── 旅行多Agent助手/                   # 源项目②（FastAPI + 前端外壳来源）
 └── README.md                          # 本文件
 ```
 
