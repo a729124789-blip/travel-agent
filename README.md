@@ -391,7 +391,6 @@ npm run dev
 
 ## 未来规划
 
-- [ ] 长期记忆从 JSON 迁移至 PostgreSQL / Redis
 - [ ] 接入美团 MCP，获取当地热度排名的餐厅推荐
 - [ ] 支持多用户系统与 JWT 鉴权
 - [ ] 行程导出为可编辑的 Word / Excel 格式
