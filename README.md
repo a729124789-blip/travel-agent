@@ -51,40 +51,7 @@
 
 ## 系统架构
 
-```mermaid
-flowchart TD
-    A([用户输入<br/>自然语言]) --> B[记忆加载<br/>load_memory]
-    B --> C[意图识别<br/>Intent Node]
-
-    subgraph P1 ["P1 · 并行执行（Send API fan-out）"]
-        D1[事项收集<br/>event_collection]
-        D2[偏好管理<br/>preference]
-        D3[信息查询<br/>info_query]
-        D4[RAG 检索<br/>rag]
-        D5[记忆查询<br/>memory_query]
-    end
-
-    C --> P1
-    P1 --> E[结果汇聚<br/>join]
-    E --> F{行程规划意图?}
-    F -->|是| G[逐天行程规划<br/>Day Planning<br/>Plan-and-Execute]
-    F -->|否| H[结果聚合<br/>aggregate]
-    G --> H
-    H --> I[记忆写回<br/>save_memory]
-    I --> J[SSE 流式输出<br/>前端渲染]
-
-    classDef intent fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
-    classDef p1 fill:#dcfce7,stroke:#22c55e,color:#14532d
-    classDef plan fill:#f3e8ff,stroke:#a855f7,color:#581c87
-    classDef memory fill:#fef9c3,stroke:#eab308,color:#713f12
-    classDef output fill:#cffafe,stroke:#06b6d4,color:#164e63
-
-    class C intent
-    class D1,D2,D3,D4,D5 p1
-    class G plan
-    class B,E,H,I memory
-    class J output
-```
+![系统架构图](docs/images/architecture.png)
 
 - **记忆闭环**：`load_memory` 注入偏好/历史 → `save_memory` 写回偏好/行程/对话，`last_origin` 自动更新默认出发地
 - **动态并行**：Intent 节点输出 `agent_schedule`，通过 `Send API` 动态决定 P1 阶段并行执行哪些节点（非固定全跑）
