@@ -547,3 +547,16 @@ async def chat_day_plan_stream(req: DayPlanRequest):
             yield _sse({"type": "error", "message": str(e)})
 
     return StreamingResponse(gen(), media_type="text/event-stream")
+
+
+# ============================================================
+# 缓存统计（评估命中率用）
+# ============================================================
+@router.get("/cache-stats", summary="Redis 缓存统计（命中率等）")
+async def cache_stats():
+    """返回缓存启用状态、命中次数、未命中次数、命中率。用于评估偏好缓存效果。"""
+    from app.services.cache_service import get_cache
+    cache = get_cache()
+    if cache is None:
+        return {"enabled": False, "message": "缓存服务未初始化"}
+    return cache.get_stats()

@@ -55,6 +55,10 @@ class Settings(BaseSettings):
     memory_path: str = "data/memory"
     short_term_max_turns: int = 10
 
+    # ===== Redis 缓存 =====
+    redis_url: str = "redis://localhost:6379/0"
+    cache_ttl: int = 3600  # 偏好缓存过期时间（秒）
+
     # ===== 韧性 =====
     max_retries: int = 3
     retry_base_delay_sec: float = 1.0

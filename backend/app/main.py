@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from loguru import logger
 
 from app.config import settings
+from app.services.cache_service import init_cache
 
 
 @asynccontextmanager
@@ -14,6 +15,14 @@ async def lifespan(app: FastAPI):
     """应用生命周期：启动/关闭时执行"""
     logger.info(f"🚀 {settings.app_name} v{settings.app_version} 启动中...")
     logger.info(f"📖 API 文档: http://localhost:{settings.port}/docs")
+
+    # 初始化 Redis 缓存
+    cache = init_cache(redis_url=settings.redis_url, default_ttl=settings.cache_ttl)
+    if cache.enabled:
+        logger.info(f"✅ Redis 缓存已启用 (hit_rate 可通过 /api/chat/cache-stats 查看)")
+    else:
+        logger.warning("⚠️ Redis 缓存未启用（连接失败或 redis 包未安装），偏好读取将直接走 JSON 文件")
+
     yield
     logger.info("👋 应用关闭")
 

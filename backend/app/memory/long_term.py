@@ -1,12 +1,15 @@
 """
 长期记忆：持久化用户信息（偏好、聊天历史、行程历史），JSON 文件存储
+偏好数据通过 Redis 缓存加速读取
 """
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 import json
 import os
 from datetime import datetime
 from pathlib import Path
 from loguru import logger
+
+from app.services.cache_service import get_cache
 
 
 class LongTermMemory:
@@ -16,9 +19,25 @@ class LongTermMemory:
         self.user_id = user_id
         self.storage_path = storage_path
         self.db_path = os.path.join(storage_path, f"{user_id}.json")
+        self._cache_key = f"pref:{user_id}"
         Path(storage_path).mkdir(parents=True, exist_ok=True)
         self.data = self._load()
         logger.info(f"长期记忆已加载: user={user_id}")
+
+    def _refresh_cache(self):
+        """将当前偏好数据写入 Redis 缓存"""
+        cache = get_cache()
+        if cache and cache.enabled:
+            cache.set(self._cache_key, self.data.get("preferences", []))
+
+    def _read_from_cache(self) -> Optional[List[Dict[str, Any]]]:
+        """从缓存读取偏好列表，未命中返回 None"""
+        cache = get_cache()
+        if cache and cache.enabled:
+            cached = cache.get(self._cache_key)
+            if cached is not None:
+                return cached
+        return None
 
     def _load(self) -> Dict[str, Any]:
         if os.path.exists(self.db_path):
@@ -99,14 +118,24 @@ class LongTermMemory:
             if pref.get("type") == pref_type:
                 pref["value"] = value
                 self._save()
+                self._refresh_cache()
                 logger.info(f"更新偏好: {pref_type}={value}")
                 return
         prefs.append({"type": pref_type, "value": value})
         self._save()
+        self._refresh_cache()
         logger.info(f"新增偏好: {pref_type}={value}")
 
     def get_preference(self, pref_type: str = None):
-        prefs = self.data["preferences"]
+        # 先查缓存
+        cached = self._read_from_cache()
+        if cached is not None:
+            prefs = cached
+        else:
+            prefs = self.data["preferences"]
+            # 缓存未命中，写回缓存
+            self._refresh_cache()
+
         if pref_type is None:
             return {p.get("type"): p.get("value") for p in prefs}
         for pref in prefs:
@@ -124,9 +153,11 @@ class LongTermMemory:
                 if value not in pref["value"]:
                     pref["value"].append(value)
                 self._save()
+                self._refresh_cache()
                 return
         prefs.append({"type": pref_type, "value": [value]})
         self._save()
+        self._refresh_cache()
 
     # ===== 聊天历史 =====
 
